@@ -4,57 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Viewer</title>
-    <style>
-      body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-      }
-
-      .section {
-          margin-bottom: 20px;
-      }
-
-      #textAreaContainer {
-          margin-bottom: 10px;
-      }
-
-      textarea {
-          width: 100%;
-          height: 100px;
-          margin-bottom: 10px;
-      }
-
-      .grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 10px;
-      }
-
-      .grid img {
-          width: 100%;
-          height: auto;
-          border-radius: 5px; /* Rounded corners */
-          object-fit: cover;
-          
-      }
-
-      .navigation {
-          margin-top: 10px;
-          text-align: center;
-      }
-
-      .navigation button {
-          margin: 0 5px;
-          padding: 5px 10px;
-      }
-
-      .hidden {
-          display: none;
-      }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe-lightbox.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe.umd.min.js" ></script>
+    <script src="./scripts.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/photoswipe.min.css" rel="stylesheet">
+    <link href="./styles.css" rel="stylesheet">
   </head>
-  <body>
+  <body>    
     <div class="section" id="section1">
       <div >
         <textarea id="imageUrls" class="input-component"></textarea>
@@ -85,125 +41,5 @@
         <button id="lastPage">Last Page</button>
       </div>
     </div>
-
-    <script>
-      const textAreaContainer = document.getElementById("textAreaContainer");
-      const textArea = document.getElementById("imageUrls");
-      const submitButton = document.getElementById("submitButton");
-      const toggleButton = document.getElementById("toggleButton");
-
-      const imageGrid = document.getElementById("imageGrid");
-      const navigation = document.getElementById("navigation");
-      const firstPageButton = document.getElementById("firstPage");
-      const prevPageButton = document.getElementById("prevPage");
-      const nextPageButton = document.getElementById("nextPage");
-      const lastPageButton = document.getElementById("lastPage");
-
-      let imageUrls = [];
-      let currentPage = 1;
-      const imagesPerPage = 15;
-
-      // Toggle visibility of the text area
-
-
-      toggleButton.addEventListener("click", () => {
-          const elements = document.querySelectorAll('.input-component');
-          console.log("Elements", elements);
-          elements.forEach(element => {
-              if (element.classList.contains("hidden")) {
-                  element.classList.remove("hidden");
-              } else {
-                  element.classList.add("hidden");
-              }
-          });
-          
-      });
-
-
-      // Update image grid when Submit is clicked
-      submitButton.addEventListener("click", () => {
-          const urls = textArea.value.trim().split("\n").filter(url => url !== "");
-          imageUrls = urls;
-          currentPage = 1;
-          renderImages();
-      });
-
-
-      // New code
-
-      const currentPageInput = document.getElementById("currentPageInput");
-      const totalPagesLabel = document.getElementById("totalPagesLabel");
-      const goToPageButton = document.getElementById("goToPage");
-
-      // Function to render images and update navigation elements
-      function renderImages() {
-          const totalPages = Math.ceil(imageUrls.length / imagesPerPage);
-          const startIndex = (currentPage - 1) * imagesPerPage;
-          const endIndex = startIndex + imagesPerPage;
-          const imagesToShow = imageUrls.slice(startIndex, endIndex);
-
-          // Clear the grid
-          imageGrid.innerHTML = "";
-
-          // Add images to the grid
-          imagesToShow.forEach(url => {
-              const img = document.createElement("img");
-              img.src = url;
-              img.alt = "Image";
-              imageGrid.appendChild(img);
-          });
-
-          // Update navigation
-          if (imageUrls.length > imagesPerPage) {
-              navigation.classList.remove("hidden");
-          } else {
-              navigation.classList.add("hidden");
-          }
-
-          // Update total pages label and current page input
-          totalPagesLabel.textContent = `/ ${totalPages}`;
-          currentPageInput.max = totalPages;
-          currentPageInput.value = currentPage;
-      }
-
-      // Event handler for the Go button
-      goToPageButton.addEventListener("click", () => {
-          const targetPage = parseInt(currentPageInput.value, 10);
-
-          if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= Math.ceil(imageUrls.length / imagesPerPage)) {
-              currentPage = targetPage;
-              renderImages();
-          } else {
-              alert("Please enter a valid page number.");
-          }
-      });
-
-      // Other navigation buttons
-      firstPageButton.addEventListener("click", () => {
-          currentPage = 1;
-          renderImages();
-      });
-
-      prevPageButton.addEventListener("click", () => {
-          if (currentPage > 1) {
-              currentPage--;
-              renderImages();
-          }
-      });
-
-      nextPageButton.addEventListener("click", () => {
-          if (currentPage < Math.ceil(imageUrls.length / imagesPerPage)) {
-              currentPage++;
-              renderImages();
-          }
-      });
-
-      lastPageButton.addEventListener("click", () => {
-          currentPage = Math.ceil(imageUrls.length / imagesPerPage);
-          renderImages();
-      });
-      // End new code   
-
-    </script>
   </body>
 </html>
