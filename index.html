@@ -51,8 +51,11 @@
 
       .hidden {
           display: none;
-      }
+      }     
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe-lightbox.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe.umd.min.js" ></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/photoswipe.min.css" rel="stylesheet">
   </head>
   <body>
     <div class="section" id="section1">
@@ -147,10 +150,22 @@
 
           // Add images to the grid
           imagesToShow.forEach(url => {
-              const img = document.createElement("img");
+              const container = document.createElement("a");
+              container.setAttribute("href", url);
+              container.setAttribute("data-pswp-srcset", url+" 1500w");
+              container.setAttribute("data-pswp-width", 1500);
+              container.setAttribute("data-pswp-height", 1000);
+              const img = document.createElement("img");              
+              container.appendChild(img);
               img.src = url;
-              img.alt = "Image";
-              imageGrid.appendChild(img);
+              img.alt = "Broken image link";
+              img.onload = () => {
+                 let w = img.naturalWidth;
+                 container.setAttribute("data-pswp-width", img.naturalWidth);
+                 container.setAttribute("data-pswp-height", img.naturalHeight);
+                 container.setAttribute("data-pswp-srcset", url+" "+img.naturalWidth+"w");
+              };
+              imageGrid.appendChild(container);
           });
 
           // Update navigation
@@ -164,7 +179,7 @@
           totalPagesLabel.textContent = `/ ${totalPages}`;
           currentPageInput.max = totalPages;
           currentPageInput.value = currentPage;
-      }
+      };
 
       // Event handler for the Go button
       goToPageButton.addEventListener("click", () => {
@@ -202,8 +217,26 @@
           currentPage = Math.ceil(imageUrls.length / imagesPerPage);
           renderImages();
       });
-      // End new code   
 
+      const options = {
+          gallery: '.grid',
+          children: 'a',
+          pswpModule: () => PhotoSwipe
+      };
+            const lightbox = new PhotoSwipeLightbox(options);
+            lightbox.on('uiRegister', function() {
+            lightbox.pswp.ui.registerElement({
+              name: 'zoom-level-indicator', order: 9,
+               onInit: (el, pswp) => {
+              pswp.on('zoomPanUpdate', (e) => {
+               if (e.slide === pswp.currSlide) {
+                el.innerText = 'Zoom level is ' + Math.round(pswp.currSlide.currZoomLevel * 100) + '%';
+               }
+              });
+              }
+              });
+             });
+      lightbox.init();
     </script>
   </body>
 </html>
