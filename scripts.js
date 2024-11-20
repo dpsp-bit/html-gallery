@@ -74,6 +74,17 @@ function loadedContent() {
                 container.setAttribute("data-pswp-height", img.naturalHeight);
                 container.setAttribute("data-pswp-srcset", url+" "+img.naturalWidth+"w");
             };
+            img.onerror =  (e) => {
+                console.error(`Failed to load image: ${img.src}` + e);
+                img.style.display = 'none';
+                container.removeAttribute("data-pswp-width");
+                container.removeAttribute("data-pswp-height");
+                container.removeAttribute("data-pswp-srcset");
+                img.removeAttribute("data-pswp-width");
+                img.removeAttribute("data-pswp-height");
+                img.removeAttribute("data-pswp-srcset");
+                imageGrid.removeChild(container);
+            };
             imageGrid.appendChild(container);
         });
 
